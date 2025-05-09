@@ -73,10 +73,26 @@ class MyGetupEnv(Getup):
         #   3. joint position (error to default pose)
         #   4. body angular velocity (error to zero)
 
-        rew_term_1 = ...
-        rew_term_2 = ...
+        # 1. Body height
+        height_err = body_pos[2] - DESIRED_BODY_HEIGHT
+        r_height = jp.exp(-5.0 * height_err**2)
 
-        reward = rew_term_1 + rew_term_2 + ...
+        # 2. Body orientation
+        r_orien = jp.dot(up_vec, gravity_vector / (jp.norm(gravity_vector) + 1e-6))
+
+        # 3. Joint position (error to default pose)
+        joint_err = joint_qpos - default_qpos[7:]
+        r_joint_pos = jp.exp(-1.0 * jp.sum(joint_err**2))
+
+        # 4. Body angular velocity (error to zero)
+        r_ang_vel = jp.exp(-0.1 * jp.sum(body_ang_vel**2))
+
+        reward = (
+            1.0 * r_height +
+            0.5 * r_orien +
+            0.5 * r_joint_pos +
+            0.2 * r_ang_vel
+        )
         # TODO: End of your code.
 
         state.info["last_last_act"] = state.info["last_act"]
