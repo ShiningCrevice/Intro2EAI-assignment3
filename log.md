@@ -29,17 +29,17 @@
         )
 ```
 
-![1](history/part2_height_error_1.png)
+![1](results/part2_height_error_1.png)
 
 ### (2) 将 `r_height` 的权重调至 `2.0`
 
-![2](history/part2_height_error_2.png)
+![2](results/part2_height_error_2.png)
 
 ### (3) 将 `r_height` 的高斯系数调至 `20.0`；四项权重为 `3.0, 0.4, 0.3, 0.1`
 
 通过 :white_check_mark:
 
-![3](history/part2_height_error_3.png)
+![3](results/part2_height_error_3.png)
 
 ## Part 3
 
@@ -55,6 +55,10 @@
 
 通过 :white_check_mark:，但是感觉不太稳定
 
-![1](history/part3_LinVel_error_1.png)
+![1](results/part3_LinVel_error_1.png)
 
 ### (2) 将 `tracking_lin_vel` 的高斯系数调为 `2.0`
+
+更好了 :blush:
+
+![2](results/part3_LinVel_error_2.png)
