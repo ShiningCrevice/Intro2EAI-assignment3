@@ -89,7 +89,7 @@ class MyWalkEnv(Joystick):
 
         # TODO: your code here. hint: use DESIRED_XY_LIN_VEL and DESIRED_YAW_ANG_VEL as goal
         lin_vel_err = body_lin_vel[:2] - DESIRED_XY_LIN_VEL
-        tracking_lin_vel = jp.exp(-0.5 * jp.sum(lin_vel_err**2))
+        tracking_lin_vel = jp.exp(-2.0 * jp.sum(lin_vel_err**2))
 
         ang_val_err = body_ang_vel[2] - DESIRED_YAW_ANG_VEL
         tracking_ang_vel = jp.exp(-1.0 * ang_val_err**2)
