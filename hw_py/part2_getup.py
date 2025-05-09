@@ -73,25 +73,27 @@ class MyGetupEnv(Getup):
         #   3. joint position (error to default pose)
         #   4. body angular velocity (error to zero)
 
-        # 1. Body height
+        # body height
         height_err = body_pos[2] - DESIRED_BODY_HEIGHT
-        r_height = jp.exp(-5.0 * height_err**2)
+        r_height = jp.exp(-20.0 * height_err**2)
 
-        # 2. Body orientation
-        r_orien = jp.dot(up_vec, gravity_vector / (jp.norm(gravity_vector) + 1e-6))
+        # body orientation
+        ori_cos = jp.dot(up_vec, gravity_vector / (jp.linalg.norm(gravity_vector) + 1e-6))
+        r_ori = (ori_cos + 1.0) * 0.5
 
-        # 3. Joint position (error to default pose)
-        joint_err = joint_qpos - default_qpos[7:]
+        # joint position (error to default pose)
+        joint_err = joint_qpos - default_qpos
         r_joint_pos = jp.exp(-1.0 * jp.sum(joint_err**2))
 
-        # 4. Body angular velocity (error to zero)
+        # body angular velocity (error to zero)
         r_ang_vel = jp.exp(-0.1 * jp.sum(body_ang_vel**2))
 
+        # weighted sum
         reward = (
-            1.0 * r_height +
-            0.5 * r_orien +
-            0.5 * r_joint_pos +
-            0.2 * r_ang_vel
+            3.0 * r_height +
+            0.4 * r_ori +
+            0.3 * r_joint_pos +
+            0.1 * r_ang_vel
         )
         # TODO: End of your code.
 
@@ -287,7 +289,7 @@ def train_ppo():
         width=640,
         scene_option=scene_option,
     )
-    media.write_video('../experiments/solutions/part2_video.mp4', frames)
+    media.write_video('part2_video.mp4', frames)
     print("video saved to part2.mp4")
 
 if __name__ == '__main__':

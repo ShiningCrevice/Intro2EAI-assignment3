@@ -88,12 +88,11 @@ class MyWalkEnv(Joystick):
         joint_qvel = data.qvel[7:]
 
         # TODO: your code here. hint: use DESIRED_XY_LIN_VEL and DESIRED_YAW_ANG_VEL as goal
-        DESIRED_XY_LIN_VEL
-        tracking_lin_vel = ...
+        lin_vel_err = body_lin_vel[:2] - DESIRED_XY_LIN_VEL
+        tracking_lin_vel = jp.exp(-0.5 * jp.sum(lin_vel_err**2))
 
-        DESIRED_YAW_ANG_VEL
-        tracking_ang_vel = ...
-
+        ang_val_err = body_ang_vel[2] - DESIRED_YAW_ANG_VEL
+        tracking_ang_vel = jp.exp(-1.0 * ang_val_err**2)
         # TODO: End of your code.
         info = state.info
         data = mjx_env.step(self.mjx_model, state.data, motor_targets, self.n_substeps)
@@ -414,7 +413,7 @@ def train_ppo():
         width=640,
         scene_option=scene_option,
     )
-    media.write_video('../experiments/solutions/part3_video.mp4', frames)
+    media.write_video('part3_video.mp4', frames)
     print("video saved to part3.mp4")
 
 if __name__ == '__main__':
