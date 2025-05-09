@@ -21,6 +21,16 @@ def monte_carlo_advantage(rewards: np.ndarray, values: np.ndarray, gamma: float)
         advantages: (np.array) Gt - V(s)
     """
     # TODO: your code here
+    T = len(rewards)
+    G = np.zeros(T)
+    advantages = np.zeros(T)
+    for t in range(T-1, -1, -1):
+        if t == T-1:
+            G[t] = rewards[t]
+        else:
+            G[t] = rewards[t] + gamma * G[t+1]
+        advantages[t] = G[t] - values[t]
+    return advantages
 
 def td_residual_advantage(rewards: np.ndarray, values: np.ndarray, gamma: float):
     """
@@ -35,7 +45,11 @@ def td_residual_advantage(rewards: np.ndarray, values: np.ndarray, gamma: float)
         advantages: (np.array) δ_t = r_t + γ * V(s_{t+1}) - V(s_t)
     """
     # TODO: your code here
-    ...
+    T = len(rewards)
+    advantages = np.zeros(T)
+    for t in range(T):
+        advantages[t] = rewards[t] + gamma * values[t+1] - values[t]
+    return advantages
 
 
 def generalized_advantage_estimation(rewards, values, gamma, lam):
@@ -54,7 +68,15 @@ def generalized_advantage_estimation(rewards, values, gamma, lam):
         advantages: (np.array) GAE advantages
     """
     # TODO: your code here
-    ...
+    T = len(rewards)
+    deltas = td_residual_advantage(rewards, values, gamma)
+    advantages = np.zeros(T)
+    for t in range(T-1, -1, -1):
+        if t == T-1:
+            advantages[t] = deltas[t]
+        else:
+            advantages[t] = deltas[t] + gamma * lam * advantages[t+1]
+    return advantages
 
 
 def compute_policy_loss(ratio, adv, dist_entropy, epsilon, entropy_weight):
@@ -72,7 +94,9 @@ def compute_policy_loss(ratio, adv, dist_entropy, epsilon, entropy_weight):
         float: The computed policy loss (scalar).
     """
     # TODO: your code here
-    ...
+    loss = -np.mean(np.minimum(ratio * adv, np.clip(ratio, 1 - epsilon, 1 + epsilon) * adv))
+    loss -= entropy_weight * dist_entropy
+    return loss
 
 
 def compute_value_loss(values, returns):
@@ -87,7 +111,8 @@ def compute_value_loss(values, returns):
         float: The computed value loss (scalar).
     """
     # TODO: your code here
-    ...
+    loss = np.mean((values - returns) ** 2)
+    return loss
 
 # check correctness
 check_monte_carlo(monte_carlo_advantage)
